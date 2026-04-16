@@ -1,35 +1,35 @@
-import {App, PluginSettingTab, Setting} from "obsidian";
-import MyPlugin from "./main";
+import { App, PluginSettingTab, SecretComponent, Setting } from "obsidian";
+import BufferPlugin from "./main";
 
-export interface MyPluginSettings {
-	mySetting: string;
+export interface BufferPluginSettings {
+	apiTokenSecret: string;
 }
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
+export const DEFAULT_SETTINGS: BufferPluginSettings = {
+	apiTokenSecret: "",
+};
 
-export class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+export class BufferSettingTab extends PluginSettingTab {
+	plugin: BufferPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: BufferPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
 
 	display(): void {
-		const {containerEl} = this;
-
+		const { containerEl } = this;
 		containerEl.empty();
 
+		containerEl.createEl("h2", { text: "Buffer Ideas" });
+
 		new Setting(containerEl)
-			.setName('Settings #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+			.setName("Buffer API token")
+			.setDesc("Select a secret from SecretStorage.")
+			.addComponent(el => new SecretComponent(this.app, el)
+				.setValue(this.plugin.settings.apiTokenSecret)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.apiTokenSecret = value;
 					await this.plugin.saveSettings();
 				}));
 	}
